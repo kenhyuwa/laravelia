@@ -31,16 +31,6 @@
             "Ken\\Laravelia\\Tests\\": "tests/"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Ken\\Laravelia\\LaraveliaServiceProvider"
-            ],
-            "aliases": {
-                "Laravelia": "Ken\\Laravelia\\Facades\\Laravelia"
-            }
-        }
-    },
     "config": {
         "sort-packages": true
     },
