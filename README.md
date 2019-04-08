@@ -1,2 +1,2 @@
 # laravelia
-Starter Lroject Of Laravel With ACL
+Starter Project Of Laravel With ACL
