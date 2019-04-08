@@ -1,7 +1,7 @@
 {
     "name": "ken/laravelia",
     "description": "Starter Project Of Laravel With ACL",
-    "type": "metapackage",
+    "type": "library",
     "keywords": ["laravelia", "ACL", "multi login laravel"],
     "license": "MIT",
     "homepage": "https://laravel-pos.com",
@@ -31,9 +31,12 @@
             "Ken\\Laravelia\\Tests\\": "tests/"
         }
     },
-    "config": {
-        "sort-packages": true
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": false
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ken\\Laravelia\\LaraveliaServiceProvider"
+            ]
+        }
+    }
 }
