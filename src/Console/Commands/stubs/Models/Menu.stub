@@ -1,0 +1,105 @@
+<?php
+
+namespace {{namespace}};
+
+use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
+use Ken\Laravelia\App\Traits\Model as ModelTrait;
+use Illuminate\Database\Eloquent\Model;
+
+class Menu extends Model
+{
+    use ModelTrait;
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'menus';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var boolean
+     */
+    public $incrementing = false;
+
+    /**
+     * Fields that can be mass assigned.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'parent',
+        'queue',
+        'en_name',
+        'id_name',
+        'icon',
+        'route'
+    ];
+
+    public static function routes()
+    {
+        $route = app()->make('router');
+        return [
+            $route->namespace('Access')->prefix(__prefix())->group(function() use ($route){
+                $route->resource('/access', 'AccessController', [
+                    'only' => ['index', 'store']
+                ])->middleware(['auth', \config('laravelia.models.permissions')::getPermission('access')]);
+            }),
+            $route->namespace('Setting')->prefix(__prefix())->group(function() use ($route){
+                $route->resource('/menu', 'NavigationController', [
+                 'except' => ['show', 'destroy']
+                ])->middleware(['auth', \config('laravelia.models.permissions')::getPermission('menu')]);
+            }),
+        ];
+    }
+
+    public function role()
+    {
+        return $this->belongsToMany(config('laravelia.models.roles'));
+    }
+
+    public function scopeNavigationMenu($query)
+    {
+        return $query->where([
+                ['parent',  null]
+            ])->ofChildren()->ofRole()->orderBy('queue', 'asc');
+    }
+
+    public function scopeOfChildren($query)
+    {
+        return $query->with([
+            'children' => function($query){
+                $query->ofRole();
+                $this->scopeOfChildren($query)->orderBy('queue', 'asc');
+            }
+        ]);
+    }
+
+    public function children()
+    {
+        return $this->hasMany(config('laravelia.models.menu'), 'parent', 'id')->orderBy('queue', 'asc');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(config('laravelia.models.menu'), 'parent', 'id');
+    }
+
+    /**
+     * Query scope OfRole.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOfRole($query)
+    {
+        return $query->with([
+            'role' => function($query){
+                $query->where('id', auth()->user()->roles->first()->id);
+            }
+        ]);
+    }
+}

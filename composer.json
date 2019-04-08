@@ -1,0 +1,49 @@
+{
+    "name": "ken/laravelia",
+    "description": "Starter Project Of Laravel With ACL",
+    "type": "metapackage",
+    "keywords": ["laravelia", "ACL", "multi login laravel"],
+    "license": "MIT",
+    "homepage": "https://laravel-pos.com",
+    "support": {
+        "issues": "https://github.com/kenhyuwa/laravelia/issues",
+        "source": "https://github.com/kenhyuwa/laravelia"
+    },
+    "authors": [
+        {
+            "name": "ken",
+            "email": "wahyu.dhiraashandy8@gmail.com"
+        }
+    ],
+    "require": {
+        "doctrine/dbal": "^2.9",
+        "moontoast/math": "^1.1",
+        "santigarcor/laratrust": "^5.2",
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Ken\\Laravelia\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ken\\Laravelia\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ken\\Laravelia\\LaraveliaServiceProvider"
+            ],
+            "aliases": {
+                "Laravelia": "Ken\\Laravelia\\Facades\\Laravelia"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

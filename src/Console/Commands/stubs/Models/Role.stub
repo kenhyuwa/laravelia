@@ -1,0 +1,122 @@
+<?php
+
+namespace {{namespace}};
+
+use Ken\Laravelia\App\Traits\Model as ModelTrait;
+use Laratrust\Models\LaratrustRole;
+
+class Role extends LaratrustRole
+{
+    use ModelTrait;
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'roles';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var boolean
+     */
+    public $incrementing = false;
+
+    /**
+     * Fields that can be mass assigned.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'display_name', 'description',
+    ];
+
+    public static function routes()
+    {
+        $route = app()->make('router');
+        return [
+            $route->namespace('Access')->prefix(__prefix())->group(function() use ($route){
+                $route->resource('/roles', 'RolesController', [
+                    'except' => ['show']
+                ])->middleware(['auth', \config('laravelia.models.permissions')::getPermission('roles')]);
+                $route->delete('/roles', [
+                    'as' => 'roles.destroyMany',
+                    'uses' => 'RolesController@destroyMany'
+                ])->middleware(['auth']);
+            }),
+        ];
+    }
+
+    /**
+     * Mutator for display_name attribute.
+     *
+     * @return void
+     */
+    public function setDisplayNameAttribute($value)
+    {
+        $this->attributes['display_name'] = is_null($value) ? $this->attributes['name'] : '';
+    }
+
+    /**
+     * Mutator for description attribute.
+     *
+     * @return void
+     */
+    public function setDescriptionAttribute($value)
+    {
+        $this->attributes['description'] = is_null($value) ? 'role of ' . $this->attributes['name'] : $value;
+    }
+
+    public function menus()
+    {
+        return $this->belongsToMany(config('laravelia.models.menu'));
+    }
+
+    public function roleGiveMenu($value)
+    {
+        if(self::isUuid($value)){
+            return $this->menus()->attach(config('laravelia.models.menu')::findOrFail($value));
+        }
+        return false;
+    }
+
+    public function roleRemoveMenu($value)
+    {
+        if(self::isUuid($value)){
+            return $this->menus()->detach(config('laravelia.models.menu')::findOrFail($value));
+        }
+        return false;
+    }
+
+    public function hasMenu($value)
+    {
+        foreach ($this->menus as $menu)
+            if ($menu->id === $value) return true;
+        return false;
+    }
+
+    public function isUuid($str)
+    {
+        try {
+            $uuid = \Ramsey\Uuid\Uuid::fromString($str);
+
+            if ($uuid->getVersion() === \Ramsey\Uuid\Uuid::UUID_TYPE_RANDOM) {
+                return true;
+            }
+        } catch (InvalidUuidStringException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Query scope OfRoles.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOfRoles($query)
+    {
+        return $query->where('id', '<>', auth()->user()->roles->first()->id)->whereNotIn('name', [config('laravelia.first_class')]);
+    }
+}

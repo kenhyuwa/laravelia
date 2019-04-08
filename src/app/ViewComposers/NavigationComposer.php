@@ -1,0 +1,60 @@
+<?php 
+
+namespace Ken\Laravelia\App\ViewComposers;
+
+use App\Models\Menu;
+use Illuminate\View\View;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Schema;
+
+class NavigationComposer
+{
+    private $menu;
+
+    public function __construct(Menu $menu)
+    {
+        $this->menu = $menu;
+    }
+
+    public function compose(View $view)
+    {
+        $view->with([
+            'navigation' => Schema::hasTable((new $this->menu)->getTable()) && auth()->check() ? $this->generateTreeNavigations($this->menu->navigationMenu()->get()->toArray()) : ""
+        ]);
+    }
+
+    private function generateTreeNavigations(array $data = [], string $html = ''){
+        config(['app.locale' => __locale()]);
+        switch (__v()):
+            case 'v2':
+                //
+            break;
+
+            default:
+                $html = $this->themeVersionOne($data, $html);
+            break;
+        endswitch;
+        return new HtmlString($html);
+    }
+
+    private function themeVersionOne(array $data = [], string $html = '')
+    {
+        foreach ($data as $i => $v):
+            if (sizeof($v['role']) > 0):
+                $name    = ucwords($v[app()->getLocale().'_name']);
+                $link    = sizeof($v['children']) > 0 ? "javascript:void(0);" : empty($v['route']) ? "" : url($v['route']);
+                $icon    = !is_null($v['parent']) ? "fa fa-circle-o" : $v['icon'];
+                $chevron = sizeof($v['children']) > 0 ? '<i class="fa fa-angle-left pull-right"></i>' : "";
+                $active  = explode('.', \Route::current()->getName())[0] == $v['route'] ? 'active' : '';
+                $html    .= "<li class='treeview {$active}'><a href='{$link}'><i class='{$icon}'></i><span>{$name}</span>{$chevron}</a>";
+                if (sizeof($v['children']) > 0):
+                    $html .= "<ul class='treeview-menu'>";
+                        $html = $this->generateTreeNavigations($v['children'], $html, $v['role']);
+                    $html .= "</ul>";
+                endif;
+                $html    .= "</li>";
+            endif;
+        endforeach;
+        return $html;
+    }
+}
