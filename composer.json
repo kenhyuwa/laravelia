@@ -39,9 +39,9 @@
             "providers": [
                 "Ken\\Laravelia\\LaraveliaServiceProvider"
             ],
-            "aliases": [
+            "aliases": {
                 "Ken\\Laravelia\\Facades\\Laravelia"
-            ]
+            }
         }
     }
 }
