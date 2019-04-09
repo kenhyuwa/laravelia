@@ -40,7 +40,7 @@
                 "Ken\\Laravelia\\LaraveliaServiceProvider"
             ],
             "aliases": {
-                "Ken\\Laravelia\\Facades\\Laravelia"
+                "Laravelia": "Ken\\Laravelia\\Facades\\Laravelia"
             }
         }
     }
