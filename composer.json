@@ -2,7 +2,7 @@
     "name": "ken/laravelia",
     "description": "Starter Project Of Laravel With ACL",
     "type": "library",
-    "keywords": ["laravelia", "ACL", "multi login laravel"],
+    "keywords": ["laravelia", "ACL", "multi-login-laravel"],
     "license": "MIT",
     "homepage": "https://laravel-pos.com",
     "support": {
@@ -20,7 +20,6 @@
         "moontoast/math": "^1.1",
         "santigarcor/laratrust": "^5.2"
     },
-
     "autoload": {
         "psr-4": {
             "Ken\\Laravelia\\": "src"
@@ -33,10 +32,16 @@
     },
     "prefer-stable": true,
     "extra": {
+        "branch-alias": {
+            "dev-master": "dev-master"
+        },
         "laravel": {
             "providers": [
                 "Ken\\Laravelia\\LaraveliaServiceProvider"
+            ],
+            "aliases": [
+                "Ken\\Laravelia\\Facades\\Laravelia"
             ]
         }
-    }
+    },
 }
