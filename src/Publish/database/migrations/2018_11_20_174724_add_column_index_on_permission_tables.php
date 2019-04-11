@@ -13,8 +13,9 @@ class AddColumnIndexOnPermissionTables extends Migration
      */
     public function up()
     {
-        if (Schema::hasTable((new $this->app['config']['laravelia.models.permissions'])->getTable()) && !Schema::hasColumn((new $this->app['config']['laravelia.models.permissions'])->getTable(), 'index')) {
-            Schema::table((new $this->app['config']['laravelia.models.permissions'])->getTable(), function(Blueprint $table) {
+        $permissions = config('laravelia.models.permissions');
+        if (Schema::hasTable((new $permissions)->getTable()) && !Schema::hasColumn((new $permissions)->getTable(), 'index')) {
+            Schema::table((new $permissions)->getTable(), function(Blueprint $table) {
                 $table->string('index')->index()->nullable()->after('id');
             });
         }
@@ -27,8 +28,9 @@ class AddColumnIndexOnPermissionTables extends Migration
      */
     public function down()
     {
-        if (Schema::hasColumn((new $this->app['config']['laravelia.models.permissions'])->getTable(), 'index')) {
-            Schema::table((new $this->app['config']['laravelia.models.permissions'])->getTable(), function(Blueprint $table) {
+        $permissions = config('laravelia.models.permissions');
+        if (Schema::hasColumn((new $permissions)->getTable(), 'index')) {
+            Schema::table((new $permissions)->getTable(), function(Blueprint $table) {
                 $table->dropColumn('index');
             });
         }

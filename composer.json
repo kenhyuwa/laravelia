@@ -21,6 +21,9 @@
         "santigarcor/laratrust": "^5.2"
     },
     "autoload": {
+        "files": [
+            "src/app/Services/Helpers/helpers.php"
+        ],
         "psr-4": {
             "Ken\\Laravelia\\": "src"
         }

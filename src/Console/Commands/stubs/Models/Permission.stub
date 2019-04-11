@@ -2,9 +2,9 @@
 
 namespace {{namespace}};
 
-use Ken\Laravelia\App\Traits\Model as ModelTrait;
 use Illuminate\Support\Facades\Schema;
 use Laratrust\Models\LaratrustPermission;
+use Ken\Laravelia\App\Traits\Model as ModelTrait;
 
 class Permission extends LaratrustPermission
 {

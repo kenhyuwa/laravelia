@@ -1,0 +1,132 @@
+<?php
+
+use {{model}};
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+
+class MenuTableSeeder extends Seeder
+{
+    public function __construct({{modelName}} $menu)
+    {
+        $this->menu = $menu;
+    }
+
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $this->menu->truncate();
+        $parent = $this->menu->insert([
+            [
+            	'id' => Str::orderedUuid()->toString(),
+                'parent' => null,
+                'queue' => 1,
+                'en_name' => 'dashboard',
+                'id_name' => 'beranda',
+                'icon' => 'fa fa-windows',
+                'route' => null,
+            ],
+            [
+                'id' => Str::orderedUuid()->toString(),
+                'parent' => null,
+                'queue' => 2,
+                'en_name' => 'master data',
+                'id_name' => 'data master',
+                'icon' => 'fa fa-shopping-cart',
+                'route' => '#',
+            ],
+            [
+            	'id' => Str::orderedUuid()->toString(),
+                'parent' => null,
+                'queue' => 3,
+                'en_name' => 'users',
+                'id_name' => 'pengguna',
+                'icon' => 'fa fa-users',
+                'route' => 'users',
+            ],
+            [
+                'id' => Str::orderedUuid()->toString(),
+                'parent' => null,
+                'queue' => 4,
+                'en_name' => 'access control',
+                'id_name' => 'akses kontrol',
+                'icon' => 'fa fa-expeditedssl',
+                'route' => '#',
+            ],
+            [
+                'id' => Str::orderedUuid()->toString(),
+                'parent' => null,
+                'queue' => 5,
+                'en_name' => 'setting',
+                'id_name' => 'pengaturan',
+                'icon' => 'fa fa-cog',
+                'route' => '#',
+            ],
+        ]);
+        $child = $this->menu->insert([
+            [
+                'id' => Str::orderedUuid()->toString(),
+                'parent' => self::findParent('access control'),
+                'queue' => 1,
+                'en_name' => 'roles',
+                'id_name' => 'levels',
+                'icon' => null,
+                'route' => 'roles',
+            ],
+            [
+                'id' => Str::orderedUuid()->toString(),
+                'parent' => self::findParent('access control'),
+                'queue' => 2,
+                'en_name' => 'access',
+                'id_name' => 'akses',
+                'icon' => null,
+                'route' => 'access',
+            ],
+            [
+                'id' => Str::orderedUuid()->toString(),
+                'parent' => self::findParent('access control'),
+                'queue' => 3,
+                'en_name' => 'permissions',
+                'id_name' => 'hak akses',
+                'icon' => null,
+                'route' => 'permissions',
+            ],
+            [
+            	'id' => Str::orderedUuid()->toString(),
+                'parent' => self::findParent('setting'),
+                'queue' => 1,
+                'en_name' => 'application',
+                'id_name' => 'aplikasi',
+                'icon' => null,
+                'route' => 'application',
+            ],
+            [
+            	'id' => Str::orderedUuid()->toString(),
+                'parent' => self::findParent('setting'),
+                'queue' => 2,
+                'en_name' => 'menu',
+                'id_name' => 'menu',
+                'icon' => null,
+                'route' => 'menu',
+            ],
+        ]);
+        $secondChild = $this->menu->insert([]);
+        $this->command->comment("\n");
+        $this->command->info('----------------------------------------------');
+        $this->command->info('================= Create Menu ================');
+        $this->command->info('----------------------------------------------');
+        foreach ($this->menu->get() as $i => $v):
+        	++$i;
+        	$this->command->info("$i. " . strtoupper($v->en_name));
+        endforeach;
+        $this->command->comment("\n");
+    }
+
+    private function findParent($name)
+    {
+        return $this->menu->whereEnName($name)->first()->id;
+    }
+}

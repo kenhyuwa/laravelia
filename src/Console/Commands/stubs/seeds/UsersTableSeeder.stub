@@ -1,0 +1,94 @@
+<?php
+
+use {{model}};
+use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
+use Ken\Laravelia\App\Services\Database\Connection as Database;
+
+class UsersTableSeeder extends Seeder
+{
+
+    public function __construct({{modelName}} $user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        self::truncate();
+        $this->command->comment("\n");
+        if($this->user->get()->count() < 1){
+            self::install();
+        }else{
+            $this->command->warn('User is ready');
+            if($this->command->confirm('Are you sure to install?')){
+                self::install();
+            }else{
+                exit();
+            }
+        }
+    }
+
+    public function truncate():void
+    {
+        Schema::disableForeignKeyConstraints();
+        foreach(self::allTables() as $table){
+            \DB::table($table->getName())->truncate();
+        }
+        Schema::enableForeignKeyConstraints();
+    }
+
+    public function allTables():array
+    {
+        $default = config('database.default');
+        return Database::setConnection([
+            'database' => config("database.connections.{$default}.database"),
+            'host' => config("database.connections.{$default}.host"),
+            'username' => config("database.connections.{$default}.username"),
+            'password' => config("database.connections.{$default}.password")
+        ])->listTables();
+    }
+
+    public function install()
+    {
+        $this->command->info('Please complete following quetions!');
+        $name = $this->command->ask('What is your name?');
+        $email = $this->command->ask('What is your email?');
+
+        if(strlen($name) < 3){
+            $this->command->error('Your name is very short for name of user!');
+            exit();
+        }
+
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $this->command->error('Email address not valid email!');
+            exit();
+        }
+
+        $password = $this->command->secret('What is your password?');
+
+        if(strlen($password) < 8){
+            $this->command->error('Password cannot be less than 8!');
+            $this->command->error('Your password is not secure!');
+            exit();
+        }
+
+        if ($this->command->confirm('Do you wish to continue?')) {
+            $array_of_users = $this->user->insert([
+                [
+                    'id' => Str::orderedUuid()->toString(),
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => bcrypt($password),
+                    'email_verified_at' => carbon()->today()->format('Y-m-d H:i:s'),
+                ],
+            ]);
+        }
+    }
+}

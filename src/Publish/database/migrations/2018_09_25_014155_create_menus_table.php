@@ -13,8 +13,9 @@ class CreateMenusTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable((new $this->app['config']['laravelia.models.menu'])->getTable())) {
-            Schema::create((new $this->app['config']['laravelia.models.menu'])->getTable(), function (Blueprint $table) {
+        $menu = config('laravelia.models.menu');
+        if (!Schema::hasTable((new $menu)->getTable())) {
+            Schema::create((new $menu)->getTable(), function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 // $table->char('group', 2)->nullable(); 
                 $table->uuid('parent')->nullable(); 
@@ -42,7 +43,8 @@ class CreateMenusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists((new $this->app['config']['laravelia.models.menu'])->getTable());
+        $menu = config('laravelia.models.menu');
+        Schema::dropIfExists((new $menu)->getTable());
         Schema::dropIfExists('menu_role');
     }
 }

@@ -18,4 +18,17 @@ class Laravelia extends Facade
     {
         return 'laravelia';
     }
+
+    /**
+     * Register the typical laravelia routes for an application.
+     *
+     * @param  array  $options
+     * @return void
+     */
+    public static function routes(array $options = [])
+    {
+        config('laravelia.models.menu')::routes();
+        config('laravelia.models.roles')::routes();
+        config('laravelia.models.permissions')::routes();
+    }
 }

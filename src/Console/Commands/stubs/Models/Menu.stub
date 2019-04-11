@@ -4,8 +4,8 @@ namespace {{namespace}};
 
 use Illuminate\Support\Str;
 use Illuminate\Support\HtmlString;
-use Ken\Laravelia\App\Traits\Model as ModelTrait;
 use Illuminate\Database\Eloquent\Model;
+use Ken\Laravelia\App\Traits\Model as ModelTrait;
 
 class Menu extends Model
 {

@@ -7,10 +7,6 @@ return [
 		"roles" =>  'App\Models\Role',
 		"permissions" =>  'App\Models\Permission',
 	],
-	"seeds" => [
-		"users" => UsersTableSeeder::class,
-		"menu" => MenuTableSeeder::class
-	],
 	"themes" => [
 		[
 			"version" => "v1",
@@ -31,9 +27,9 @@ return [
 		"id_ID" => "id", 
 		"en_EN" => "en", 
 	],
-	"first_class" => "owner",
+	"first_class" => "superuser",
 	"roles" => [
-		"owner" => [
+		"superuser" => [
 			"menu" => [
 				"dashboard",
 				"setting",
@@ -44,17 +40,7 @@ return [
 				"roles",
 				"access",
 				"permissions",
-				"point of sales",
 				"master",
-				"departement",
-				"brands",
-				"products",
-				"purchase",
-				"sales",
-				"report",
-				"purchase report",
-				"sales report",
-				"user guide"
 			],
 			"permissions" => [
 				"dashboard" => "i",
@@ -64,118 +50,10 @@ return [
 				"roles" => "i,c,sh,st,e,u,d",
 				"access" => "i,st",
 				"permissions" => "i,st",
-				"departement" => "i,c,sh,st,e,u,d",
-				"brands" => "i,c,sh,st,e,u,d",
-				"products" => "i,c,sh,st,e,u,d",
-				"purchase" => "i,c,sh,st,e,u,d",
-				"sales" => "i,c,st",
-				"purchase report" => "i",
-				"sales report" => "i",
-				"user guide" => "i",
 				"profile" => "i,st",
 			]
 		],
-		"admin" => [
-			"menu" => [
-				"dashboard",
-				"setting",
-				"application",
-				"menu",
-				"users",
-				"access control",
-				"roles",
-				"point of sales",
-				"master",
-				"departement",
-				"brands",
-				"products",
-				"purchase",
-				"sales",
-				"user guide"
-			],
-			"permissions" => [
-				"dashboard" => "i",
-				"application" => "i,st",
-				"users" => "i,c,sh,st,e,u,d",
-				"menu" => "i,st",
-				"roles" => "i,c,sh,st,e,u,d",
-				"departement" => "i,c,sh,st,e,u,d",
-				"brands" => "i,c,sh,st,e,u,d",
-				"products" => "i,c,sh,st,e,u,d",
-				"purchase" => "i,c,sh,st,e,u,d",
-				"sales" => "i,c,st",
-				"user guide" => "i",
-				"profile" => "i,st",
-			]
-		],
-		"casier" => [
-			"menu" => [
-				"dashboard",
-				"setting",
-				"application",
-				"point of sales",
-				"master",
-				"departement",
-				"brands",
-				"products",
-				"purchase",
-				"sales",
-				"user guide"
-			],
-			"permissions" => [
-				"dashboard" => "i",
-				"application" => "i",
-				"departement" => "i,c,sh,st",
-				"brands" => "i,c,sh,st",
-				"products" => "i,c,sh,st",
-				"purchase" => "i,c,sh,st",
-				"sales" => "i,c,st",
-				"user guide" => "i",
-				"profile" => "i,st",
-			]
-		],
-		"demo" => [
-			"menu" => [
-				"dashboard",
-				"setting",
-				"application",
-				"menu",
-				"users",
-				"access control",
-				"roles",
-				"access",
-				"permissions",
-				"point of sales",
-				"master",
-				"departement",
-				"brands",
-				"products",
-				"purchase",
-				"sales",
-				"report",
-				"purchase report",
-				"sales report",
-				"user guide"
-			],
-			"permissions" => [
-				"dashboard" => "i",
-				"application" => "i",
-				"users" => "i,c,sh,st",
-				"menu" => "i,e",
-				"roles" => "i,c,sh,st,e,u",
-				"access" => "i",
-				"permissions" => "i",
-				"departement" => "i,c,sh,st,e,u,d",
-				"brands" => "i,c,sh,st,e,u,d",
-				"products" => "i,c,sh,st,e,u",
-				"purchase" => "i,c,sh,st,e,u,d",
-				"sales" => "i,c,st",
-				"purchase report" => "i",
-				"sales report" => "i",
-				"user guide" => "i",
-				"profile" => "i,st",
-			]
-		],
+		// "other role" => []
 	],
 	"permissions" => [
 		// "dashboard",

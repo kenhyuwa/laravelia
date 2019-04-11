@@ -2,7 +2,7 @@
 
 namespace {{namespace}}ViewComposers;
 
-use {{models}};
+use {{modelNamespace}};
 use Illuminate\View\View;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Schema;
@@ -11,7 +11,7 @@ class NavigationComposer
 {
     private $menu;
 
-    public function __construct({{models}} $menu)
+    public function __construct({{modelName}} $menu)
     {
         $this->menu = $menu;
     }
@@ -27,7 +27,7 @@ class NavigationComposer
         config(['app.locale' => __locale()]);
         switch (__v()):
             case 'v2':
-                //
+                $html = $this->themeVersionOne($data, $html);
             break;
 
             default:
@@ -56,5 +56,10 @@ class NavigationComposer
             endif;
         endforeach;
         return $html;
+    }
+
+    private function themeVersionTwo(array $data = [], string $html = '')
+    {
+        // 
     }
 }

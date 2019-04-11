@@ -3,20 +3,35 @@
 namespace Ken\Laravelia;
 
 use Ken\Laravelia\Facades\Laravelia;
-use Ken\Laravelia\Console\Commands\Composer;
-use Ken\Laravelia\Console\Commands\Install;
+use Ken\Laravelia\Console\Commands\NavigationComposer;
+use Ken\Laravelia\Console\Commands\InstallLaravelia;
 use Illuminate\Support\ServiceProvider;
 
 class LaraveliaServiceProvider extends ServiceProvider
 {
 	protected $defer = true;
 
-	public function register()
-	{
-        $this->app->bind('laravelia', function($app) {
+	/**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->singleton('laravelia', function($app) {
 			return new Laravelia($app);
 		});
 	}
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [Laravelia::class];
+    }
 
 	/**
 	 * Bootstrap the application services.
@@ -25,47 +40,35 @@ class LaraveliaServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-	    if ($this->app->runningInConsole()) {
+		if ($this->app->runningInConsole()) {
 	        $this->commands([
-	            Install::class,
-	            Composer::class
+	            NavigationComposer::class,
+	            InstallLaravelia::class,
 	        ]);
 	    }
-
 	    $this->load();
 
 	    $this->publishes([
-	        __DIR__.'/Publish/config/laravelia.php' => config_path('laravelia.php'),
-	        __DIR__.'/Publish/config/config.json' => base_path('config.json'),
-	        __DIR__.'/Publish/migrations' => database_path('migrations'),
-	        __DIR__.'/Publish/seeds' => database_path('seeds'),
-	        __DIR__.'/Publish/public' => public_path('/'),
+	        __DIR__.'/Publish/config/config.json' => base_path('laravelia.config.json'),
+	        __DIR__.'/Publish/database/migrations/' => database_path('migrations'),
+	        __DIR__.'/Publish/database/seeds/' => database_path('seeds'),
+	        // __DIR__.'/Publish/public' => public_path('/'),
 	    ], 'laravelia');
 
 	    $this->publishes([
-	        __DIR__.'/app/ViewComposers/NavigationComposer.php' => app_path('Http/ViewComposers/NavigationComposer.php'),
-	    ], 'laravelia_composer');
+	    	__DIR__.'/Publish/config/laratrust.php' => config_path('laratrust.php'),
+	    	__DIR__.'/Publish/config/laravelia.php' => config_path('laravelia.php'),
+	    ], 'config-laravelia');
 	}
 
 	public function load()
 	{
-		$this->loadViewsFrom(__DIR__.'/app/views/v1', 'laravelia');
+		$this->mergeConfigFrom(__DIR__.'/Publish/config/laravelia.php', 'laravelia');
 
-		require_once __DIR__.'/app/Services/Helpers/app.php';
+		$this->mergeConfigFrom(__DIR__.'/Publish/config/laratrust.php', 'laratrust');
+		
+		$this->loadViewsFrom(__DIR__.'/app/views/v1', 'laravelia');
 
         view()->composer('*', 'Ken\Laravelia\App\ViewComposers\NavigationComposer');
 	}
-
-    /**
-     * Register the typical laravelia routes for an application.
-     *
-     * @param  array  $options
-     * @return void
-     */
-    public static function routes(array $options = [])
-    {
-        config('laravelia.models.menu')::routes();
-        config('laravelia.models.roles')::routes();
-        config('laravelia.models.permissions')::routes();
-    }
 }

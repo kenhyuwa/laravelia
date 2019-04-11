@@ -1,0 +1,92 @@
+<?php
+
+namespace {{namespace}};
+
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laratrust\Traits\LaratrustUserTrait as LaratrustUserAuthenticatable;
+use Ken\Laravelia\App\Traits\Model as ModelTrait;
+
+class User extends Authenticatable
+{
+    use LaratrustUserAuthenticatable;
+    use Notifiable;
+    use ModelTrait;
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var boolean
+     */
+    public $incrementing = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name', 'email', 'password','email_verified_at', 'my_theme', 'my_color'
+    ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    protected $appends = [
+        'avatar'
+    ];
+
+    public static function routes()
+    {
+        $route = app()->make('router');
+        return [
+            $route->namespace('User')->group(function() use ($route){
+                $route->resource('/users', 'UserController', [
+                    'except' => []
+                ])->middleware(['auth', \config('laravelia.models.permissions')::getPermission('users')]);
+                $route->delete('/users', [
+                    'as' => 'users.destroyMany',
+                    'uses' => 'UserController@destroyMany'
+                ]);
+            }),
+            $route->namespace('Profile')->group(function() use ($route){
+                $route->resource('/profile', 'ProfileController', [
+                    'only' => ['index', 'store']
+                ])->middleware(['auth', \config('laravelia.models.permissions')::getPermission('profile')]);
+            })
+        ];
+    }
+
+    public function getAvatarAttribute()
+    {
+        return 'https://www.gravatar.com/avatar/'.md5(strtolower($this->attributes['email'])).'.jpg?s=200&d=mm';
+    }
+
+    /**
+     * Query scope OfUser.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOfUser($query, $id = null)
+    {
+        if(!is_null($id)){
+            return $query->with('roles')->whereId($id)->first();
+        }
+        return $query->with('roles')->where('id', '<>', auth()->id());
+    }
+}
